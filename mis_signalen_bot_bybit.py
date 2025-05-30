@@ -6,8 +6,10 @@ import ccxt
 import time
 import requests
 
-BOT_TOKEN = "VUL_HIER_JE_TOKEN_IN"
-CHAT_ID = "VUL_HIER_JE_CHAT_ID_IN"
+import os
+
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
 
 symbols = ["JASMY/USDT", "PEPE/USDT"]  # Voeg later meer toe
 
