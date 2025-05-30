@@ -11,7 +11,16 @@ import os
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 
-symbols = ["JASMY/USDT", "PEPE/USDT"]  # Voeg later meer toe
+symbols = symbols = [
+    "JASMY/USDT", "PEPE/USDT", "RENDER/USDT", "GRT/USDT", "INJ/USDT", "FET/USDT",
+    "AR/USDT", "AVA/USDT", "CELO/USDT", "COMP/USDT", "SOLO/USDT", "PRIME/USDT",
+    "ALGO/USDT", "APT/USDT", "ARKM/USDT", "BABYDOGE/USDT", "BONK/USDT", "CGPT/USDT",
+    "CPOOL/USDT", "CRV/USDT", "DRIFT/USDT", "ENA/USDT", "ENS/USDT", "FLOKI/USDT",
+    "GRASS/USDT", "HBAR/USDT", "ICX/USDT", "ICP/USDT", "ID/USDT", "HTX/USDT",
+    "IMX/USDT", "KAS/USDT", "KAVA/USDT", "KMNO/USDT", "OP/USDT", "PENDLE/USDT",
+    "ONE/USDT", "QNT/USDT", "RUNE/USDT", "STX/USDT", "SUI/USDT", "ZEN/USDT",
+    "ZRX/USDT", "ANKR/USDT", "G/USDT", "SUNDOG/USDT", "TRX/USDT", "ACH/USDT"
+]
 
 def send_telegram(msg):
     requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", data={
