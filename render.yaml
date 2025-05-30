@@ -4,6 +4,6 @@ services:
     env: python
     region: frankfurt
     plan: free
-    buildCommand: ""
+    buildCommand: "pip install -r requirements.txt"
     startCommand: "python mis_signalen_bot_bybit.py"
     autoDeploy: true
