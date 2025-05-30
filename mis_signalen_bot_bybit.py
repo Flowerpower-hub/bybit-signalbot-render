@@ -33,7 +33,7 @@ def fetch_data(exchange, symbol):
         candles = exchange.fetch_ohlcv(symbol, timeframe="1m", limit=10)
         return candles
     except Exception as e:
-        send_telegram(f"Fout bij ophalen {symbol}: {e}")
+        send_telegram(f"⚠️ Fout bij ophalen {symbol}: {str(e)}")
         return []
 
 def check_signal(candles):
