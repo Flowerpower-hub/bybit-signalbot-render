@@ -1,0 +1,15 @@
+render.yaml
+services:
+  - type: worker
+    name: mis-signalen-bot
+    runtime: python
+    region: frankfurt
+    plan: starter
+    branch: main
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python mis_signalen_bot_bybit.py"
+    envVars:
+      - key: BOT_TOKEN
+        sync: false
+      - key: CHAT_ID
+        sync: false
