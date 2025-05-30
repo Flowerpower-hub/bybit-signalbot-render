@@ -1,0 +1,9 @@
+services:
+  - type: worker
+    name: bybit-signalbot
+    env: python
+    region: frankfurt
+    plan: free
+    buildCommand: ""
+    startCommand: "python mis_signalen_bot_bybit.py"
+    autoDeploy: true
