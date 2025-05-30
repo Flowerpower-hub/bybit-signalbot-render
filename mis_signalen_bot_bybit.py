@@ -44,6 +44,6 @@ def main():
             if check_signal(candles):
                 send_telegram(f"LONG-signaal 1% 📈: {symbol}")
         time.sleep(300)  # Check elke 5 min
-        
-send_telegram("✅ Testbericht vanaf Render bot")
-exit()
+
+if __name__ == "__main__":
+    main()
