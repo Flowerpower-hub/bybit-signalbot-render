@@ -1,4 +1,3 @@
-
 import ccxt
 import time
 import requests
@@ -7,9 +6,16 @@ import datetime
 import pytz
 import csv
 
+# Headers voor Telegram-requests (nodig voor sommige hosts)
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
+}
+
+# Telegram authenticatie
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 
+# Geselecteerde munten
 symbols = [
     "JASMY/USDT", "PEPE/USDT", "RENDER/USDT", "GRT/USDT", "INJ/USDT", "FET/USDT",
     "AR/USDT", "AVA/USDT", "CELO/USDT", "COMP/USDT", "SOLO/USDT", "PRIME/USDT",
@@ -25,10 +31,14 @@ laatste_signalen = {}
 bevestigde_signalen = {}
 
 def send_telegram(msg):
-    requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", data={
-        "chat_id": CHAT_ID,
-        "text": msg
-    })
+    try:
+        requests.post(
+            f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
+            headers=headers,
+            data={"chat_id": CHAT_ID, "text": msg}
+        )
+    except Exception as e:
+        print("Telegram fout:", e)
 
 def log_signaal(symbol, richting, timeframe, signaaltype):
     tijd_nl = datetime.datetime.now(pytz.timezone("Europe/Amsterdam")).strftime("%Y-%m-%d %H:%M:%S")
@@ -78,7 +88,10 @@ def analyse_candles(candles):
     prev = candles[-3]
     kleur = "groen" if candle[4] > candle[1] else "rood"
     stoch_k = 100 * ((candle[4] - min(lows[-14:])) / (max(highs[-14:]) - min(lows[-14:])))
-    stoch_d = sum([100 * ((c[4] - min(lows[-14:])) / (max(highs[-14:]) - min(lows[-14:]))) for c in candles[-4:-1]]) / 3
+    stoch_d = sum([
+        100 * ((c[4] - min(lows[-14:])) / (max(highs[-14:]) - min(lows[-14:])))
+        for c in candles[-4:-1]
+    ]) / 3
     return {
         "close": candle[4],
         "open": candle[1],
@@ -96,16 +109,21 @@ def analyse_candles(candles):
 def check_entry(info, richting):
     if richting == "long":
         return ((info["close"] < info["bb_lower"]) or
-                (info["color"] == "groen" and info["prev_close"] < info["bb_lower"])) and                 info["stoch_k"] < 20 and info["stoch_d"] < 20
+                (info["color"] == "groen" and info["prev_close"] < info["bb_lower"])) and \
+               info["stoch_k"] < 20 and info["stoch_d"] < 20
     elif richting == "short":
         return ((info["close"] > info["bb_upper"]) or
-                (info["color"] == "rood" and info["prev_close"] > info["bb_upper"])) and                 info["stoch_k"] > 80 and info["stoch_d"] > 80
+                (info["color"] == "rood" and info["prev_close"] > info["bb_upper"])) and \
+               info["stoch_k"] > 80 and info["stoch_d"] > 80
     return False
 
 def main():
     print("✅ Start main()")
 
-    exchange = ccxt.bybit({'enableRateLimit': True})
+    exchange = ccxt.bybit({
+        'enableRateLimit': True,
+        'headers': headers
+    })
     send_telegram("Signaalsysteem actief sinds 06:30")
 
     while True:
@@ -114,13 +132,13 @@ def main():
             continue
 
         for symbol in symbols:
-            print(f"🔍 Ophalen 1h candles voor {symbol}"); candles_1h = fetch_data(exchange, symbol, '1h')
-            print(f"📈 Trend bepalen voor {symbol}"); trend = bepaal_trend(candles_1h)
+            candles_1h = fetch_data(exchange, symbol, '1h')
+            trend = bepaal_trend(candles_1h)
             if not trend:
                 continue
 
-            print(f"🔍 Ophalen 15m candles voor {symbol}"); candles_15m = fetch_data(exchange, symbol, '15m')
-            print(f"🧠 Analyse 15m voor {symbol}"); analyse_15m = analyse_candles(candles_15m)
+            candles_15m = fetch_data(exchange, symbol, '15m')
+            analyse_15m = analyse_candles(candles_15m)
             if analyse_15m:
                 richting = "long" if trend == "up" else "short"
                 if check_entry(analyse_15m, richting):
@@ -133,8 +151,8 @@ def main():
                         laatste_signalen[sleutel] = nu
                         bevestigde_signalen[sleutel] = nu
 
-            print(f"🔍 Ophalen 5m candles voor {symbol}"); candles_5m = fetch_data(exchange, symbol, '5m')
-            print(f"🧠 Analyse 5m voor {symbol}"); analyse_5m = analyse_candles(candles_5m)
+            candles_5m = fetch_data(exchange, symbol, '5m')
+            analyse_5m = analyse_candles(candles_5m)
             if analyse_5m:
                 richting = "long" if trend == "up" else "short"
                 sleutel = f"{symbol}_{richting}"
@@ -154,10 +172,5 @@ if __name__ == "__main__":
         main()
     except Exception as e:
         tijd = datetime.datetime.now(pytz.timezone("Europe/Amsterdam")).strftime("%Y-%m-%d %H:%M:%S")
-        foutmelding = f"CRASH op {tijd}\nFout: {str(e)}"
-        try:
-            send_telegram(foutmelding)
-        except:
-            pass
-        raise
-
+        foutmelding = f"🚨 CRASH op {tijd}\nFout: {str(e)}"
+        send_telegram(foutmelding)
