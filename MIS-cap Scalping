@@ -1,0 +1,40 @@
+README.md
+# Bybit Signalbot – MIS-cap Scalping
+
+Deze bot genereert geautomatiseerde long- en shortsignalen voor 48 mid- en smallcap crypto's op Bybit Spot, gericht op scalpen tussen 06:30–22:00 (NL-tijd).
+
+## ✅ Strategie v1.1 – Trend Confirmatie
+
+- 📈 **Trendfilter** via 1H EMA9 > EMA21
+- 🕰️ **Primair signaal op 15m**, daarna optionele bevestiging op 5m
+- 🔁 **Herstart elke dag automatisch om 06:25 via cronjob**
+- 📉 **Bollinger Band afstand ≥ 2%** vereist voor signaal
+- ✅ Enkel gesloten candles worden geëvalueerd
+- ❗ Per munt/richting maximaal 1 signaal per uur (anti-spam)
+
+## ⚙️ Techniek & Hosting
+
+- Python 3 script met `ccxt`, `requests`, `pytz`
+- Gehost op [Render.com](https://render.com) via `render.yaml`
+- Telegram-notificaties met je eigen bot
+- Gekoppeld aan een dagelijkse cronjob via [cron-job.org](https://cron-job.org)
+
+## 📁 Bestanden
+
+| Bestand              | Functie                                 |
+|----------------------|------------------------------------------|
+| `main.py`            | Hoofdscript voor signalen               |
+| `render.yaml`        | Render-configuratie voor deployment     |
+| `requirements.txt`   | Benodigde Python-pakketten              |
+
+## 🔐 Gevoelige gegevens (Render Environment)
+
+| Variabele  | Omschrijving                        |
+|------------|-------------------------------------|
+| `BOT_TOKEN`| Telegram bot token via BotFather    |
+| `CHAT_ID`  | Jouw persoonlijke Telegram chat-ID  |
+
+---
+
+> Onderhoud en gebruik: Flowerpower-hub ✌️
+README toegevoegd voor uitleg projectstructuur
