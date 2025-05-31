@@ -5,5 +5,5 @@ services:
     region: frankfurt
     plan: free
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "python mis_signalen_bot_bybit.py"
+    startCommand: python bybit_scalpbot_v1.3_crashlog.py
     autoDeploy: true
