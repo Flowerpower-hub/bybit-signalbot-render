@@ -1,1 +1,2 @@
-https://github.com/heroku/heroku-buildpack-python
+https://github.com/paketo-buildpacks/python
+https://github.com/paketo-buildpacks/pip-install
