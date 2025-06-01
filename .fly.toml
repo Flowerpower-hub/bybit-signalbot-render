@@ -1,2 +1,10 @@
+app = "bybit-signalbot-render"
+
 [build]
-  builder = "paketobuildpacks/builder:base"
+  dockerfile = "Dockerfile"
+
+[env]
+  PYTHONUNBUFFERED = "1"
+
+[experimental]
+  auto_rollback = true
