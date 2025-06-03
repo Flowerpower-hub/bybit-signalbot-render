@@ -12,8 +12,8 @@ headers = {
 }
 
 # Telegram authenticatie
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-CHAT_ID = os.getenv("CHAT_ID")
+BOT_TOKEN = "7904500180:AAFYiSp7KN9RXcNbjWEIg2u9y_Dn9jhE99w"
+CHAT_ID = "1153513247"
 
 # Geselecteerde munten
 symbols = [
@@ -119,13 +119,13 @@ def check_entry(info, richting):
 
 def main():
     print("✅ Start main()")
+    send_telegram("✅ Bot is live – testmelding vanuit script")
 
     exchange = ccxt.bybit({
         'enableRateLimit': True,
         'headers': headers
     })
     send_telegram("Signaalsysteem actief sinds 06:30")
-
     while True:
         if not binnen_tijdvenster():
             time.sleep(60)
@@ -168,9 +168,12 @@ def main():
         time.sleep(300)
 
 if __name__ == "__main__":
-    try:
-        main()
-    except Exception as e:
-        tijd = datetime.datetime.now(pytz.timezone("Europe/Amsterdam")).strftime("%Y-%m-%d %H:%M:%S")
-        foutmelding = f"🚨 CRASH op {tijd}\nFout: {str(e)}"
-        send_telegram(foutmelding)
+    while True:
+        try:
+            main()
+        except Exception as e:
+            tijd = datetime.datetime.now(pytz.timezone("Europe/Amsterdam")).strftime("%Y-%m-%d %H:%M:%S")
+            foutmelding = f"🚨 CRASH op {tijd}\nFout: {str(e)}\nBot wordt automatisch herstart over 60 sec..."
+            print(foutmelding)
+            send_telegram(foutmelding)
+            time.sleep(60)

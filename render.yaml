@@ -1,9 +1,11 @@
 services:
-  - type: worker
+  - type: web
     name: bybit-signalbot
     env: python
-    region: frankfurt
     plan: free
     buildCommand: ""
-    startCommand: "python mis_signalen_bot_bybit.py"
+    startCommand: python bybit_scalpbot_v1.3_debuglog.py
     autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11
